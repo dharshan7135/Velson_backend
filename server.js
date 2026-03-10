@@ -46,6 +46,43 @@ app.use("/api", createEntityRoutes());
 // Advanced product routes (filtering, stats, bulk) 
 app.use("/api/products", productRoutes);
 
+// ── Dropdown Options Persistence ──────────────────────────────
+const DropdownOption = require("./models/DropdownOption");
+
+// GET all dropdown option overrides
+app.get("/api/dropdownOptions", async (req, res, next) => {
+    try {
+        const all = await DropdownOption.find().lean();
+        // Return as a map: { dropdownKey: { added, removed, edits } }
+        const map = {};
+        all.forEach((doc) => {
+            map[doc.dropdownKey] = {
+                added: doc.added || [],
+                removed: doc.removed || [],
+                edits: doc.edits || {},
+            };
+        });
+        res.status(200).json(map);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// PUT upsert a single dropdown key's state
+app.put("/api/dropdownOptions/:key", async (req, res, next) => {
+    try {
+        const { added, removed, edits } = req.body;
+        const doc = await DropdownOption.findOneAndUpdate(
+            { dropdownKey: req.params.key },
+            { added: added || [], removed: removed || [], edits: edits || {} },
+            { upsert: true, new: true, runValidators: true }
+        );
+        res.status(200).json(doc);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // ── Error Handling ────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);

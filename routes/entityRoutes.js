@@ -47,6 +47,47 @@ const entityMap = {
 const createEntityRoutes = () => {
     const router = express.Router();
 
+    // ── Bulk endpoint: fetch ALL entities + dropdown overrides in a single request ──
+    router.get("/bulk", async (req, res, next) => {
+        try {
+            const DropdownOption = require("../models/DropdownOption");
+
+            const [entityResults, dropdownDocs] = await Promise.all([
+                // Fetch all entities in parallel
+                Promise.all(
+                    Object.entries(entityMap).map(async ([key, { model, sortField }]) => {
+                        const sortBy = sortField ? { [sortField]: 1 } : { createdAt: 1 };
+                        const records = await model.find().sort(sortBy).lean();
+                        return [
+                            key,
+                            records.map((r) => ({ ...r, id: r._id.toString() })),
+                        ];
+                    })
+                ),
+                // Fetch dropdown overrides
+                DropdownOption.find().lean(),
+            ]);
+
+            const payload = Object.fromEntries(entityResults);
+
+            // Build dropdownState map
+            const dropdownState = {};
+            dropdownDocs.forEach((doc) => {
+                dropdownState[doc.dropdownKey] = {
+                    added: doc.added || [],
+                    removed: doc.removed || [],
+                    edits: doc.edits || {},
+                };
+            });
+            payload.dropdownState = dropdownState;
+
+            res.status(200).json(payload);
+        } catch (error) {
+            next(error);
+        }
+    });
+
+    // ── Per-entity CRUD routes ────────────────────────────────
     Object.entries(entityMap).forEach(([path, { model, name, uniqueField, sortField }]) => {
         const controller = createCrudController(model, name, { uniqueField, sortField });
 
