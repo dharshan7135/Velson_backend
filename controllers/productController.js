@@ -1,10 +1,24 @@
-const Product = require("../models/Product");
-
 /**
- * @desc    Get all products (with filtering, sorting, pagination)
- * @route   GET /api/products
- * @access  Public
+ * Product Controller — PostgreSQL / JSONB edition
+ *
+ * Products live in the "products" table with a JSONB `data` column.
+ * All filtering, sorting, pagination, aggregation are done via SQL.
  */
+const { pool } = require("../config/db");
+
+const TABLE = "products";
+
+/** Flatten a DB row into a single flat object (same shape as Mongoose doc) */
+const flattenRow = (row) => ({
+    ...row.data,
+    id: String(row.id),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+});
+
+// ────────────────────────────────────────────────────────────
+// GET /api/products  — filtering, sorting, pagination
+// ────────────────────────────────────────────────────────────
 const getProducts = async (req, res, next) => {
     try {
         const {
@@ -20,165 +34,192 @@ const getProducts = async (req, res, next) => {
             limit = 20,
         } = req.query;
 
-        // Build filter object
-        const filter = {};
+        const conditions = [];
+        const params = [];
+        let paramIdx = 1;
 
-        if (category) filter.category = category;
-        if (brand) filter.brand = { $regex: brand, $options: "i" };
-        if (isActive !== undefined) filter.isActive = isActive === "true";
-
-        // Price range filter
-        if (minPrice || maxPrice) {
-            filter.price = {};
-            if (minPrice) filter.price.$gte = Number(minPrice);
-            if (maxPrice) filter.price.$lte = Number(maxPrice);
+        if (category) {
+            conditions.push(`data->>'category' = $${paramIdx++}`);
+            params.push(category);
         }
-
-        // Text search
+        if (brand) {
+            conditions.push(`data->>'brand' ILIKE $${paramIdx++}`);
+            params.push(`%${brand}%`);
+        }
+        if (isActive !== undefined) {
+            conditions.push(`(data->>'isActive')::boolean = $${paramIdx++}`);
+            params.push(isActive === "true");
+        }
+        if (minPrice) {
+            conditions.push(`(data->>'price')::numeric >= $${paramIdx++}`);
+            params.push(Number(minPrice));
+        }
+        if (maxPrice) {
+            conditions.push(`(data->>'price')::numeric <= $${paramIdx++}`);
+            params.push(Number(maxPrice));
+        }
         if (search) {
-            filter.$text = { $search: search };
+            conditions.push(`(data->>'name' ILIKE $${paramIdx} OR data->>'description' ILIKE $${paramIdx})`);
+            params.push(`%${search}%`);
+            paramIdx++;
+        }
+        if (lowStock === "true") {
+            conditions.push(`(data->>'stock')::numeric <= (data->>'lowStockThreshold')::numeric`);
         }
 
-        // Low stock filter
-        if (lowStock === "true") {
-            filter.$expr = { $lte: ["$stock", "$lowStockThreshold"] };
+        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+        // Sort
+        let orderClause = "ORDER BY created_at DESC";
+        if (sort) {
+            const desc = sort.startsWith("-");
+            const field = desc ? sort.slice(1) : sort;
+            if (field === "createdAt") {
+                orderClause = `ORDER BY created_at ${desc ? "DESC" : "ASC"}`;
+            } else {
+                orderClause = `ORDER BY data->>'${field}' ${desc ? "DESC" : "ASC"}`;
+            }
         }
 
         // Pagination
         const pageNum = Math.max(1, parseInt(page));
         const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
-        const skip = (pageNum - 1) * limitNum;
+        const offset = (pageNum - 1) * limitNum;
 
-        // Execute query
-        const [products, total] = await Promise.all([
-            Product.find(filter).sort(sort).skip(skip).limit(limitNum).lean(),
-            Product.countDocuments(filter),
+        const [dataResult, countResult] = await Promise.all([
+            pool.query(
+                `SELECT * FROM "${TABLE}" ${whereClause} ${orderClause} LIMIT ${limitNum} OFFSET ${offset}`,
+                params
+            ),
+            pool.query(
+                `SELECT COUNT(*) AS total FROM "${TABLE}" ${whereClause}`,
+                params
+            ),
         ]);
+
+        const total = parseInt(countResult.rows[0].total, 10);
 
         res.status(200).json({
             success: true,
-            count: products.length,
+            count: dataResult.rows.length,
             total,
             page: pageNum,
             pages: Math.ceil(total / limitNum),
-            data: products,
+            data: dataResult.rows.map(flattenRow),
         });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Get single product by ID
- * @route   GET /api/products/:id
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// GET /api/products/:id
+// ────────────────────────────────────────────────────────────
 const getProductById = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const { rows } = await pool.query(
+            `SELECT * FROM "${TABLE}" WHERE id = $1`,
+            [req.params.id]
+        );
 
-        if (!product) {
+        if (rows.length === 0) {
             res.status(404);
             throw new Error("Product not found");
         }
 
-        res.status(200).json({
-            success: true,
-            data: product,
-        });
+        res.status(200).json({ success: true, data: flattenRow(rows[0]) });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Get single product by slug
- * @route   GET /api/products/slug/:slug
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// GET /api/products/slug/:slug
+// ────────────────────────────────────────────────────────────
 const getProductBySlug = async (req, res, next) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug });
+        const { rows } = await pool.query(
+            `SELECT * FROM "${TABLE}" WHERE data->>'slug' = $1`,
+            [req.params.slug]
+        );
 
-        if (!product) {
+        if (rows.length === 0) {
             res.status(404);
             throw new Error("Product not found");
         }
 
-        res.status(200).json({
-            success: true,
-            data: product,
-        });
+        res.status(200).json({ success: true, data: flattenRow(rows[0]) });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Create a new product
- * @route   POST /api/products
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// POST /api/products
+// ────────────────────────────────────────────────────────────
 const createProduct = async (req, res, next) => {
     try {
-        const product = await Product.create(req.body);
+        const { rows } = await pool.query(
+            `INSERT INTO "${TABLE}" (data) VALUES ($1) RETURNING *`,
+            [JSON.stringify(req.body)]
+        );
 
         res.status(201).json({
             success: true,
             message: "Product created successfully",
-            data: product,
+            data: flattenRow(rows[0]),
         });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Update a product
- * @route   PUT /api/products/:id
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// PUT /api/products/:id
+// ────────────────────────────────────────────────────────────
 const updateProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const { rows: existing } = await pool.query(
+            `SELECT * FROM "${TABLE}" WHERE id = $1`,
+            [req.params.id]
+        );
 
-        if (!product) {
+        if (existing.length === 0) {
             res.status(404);
             throw new Error("Product not found");
         }
 
-        // Update fields
-        Object.keys(req.body).forEach((key) => {
-            product[key] = req.body[key];
-        });
+        const mergedData = { ...existing[0].data, ...req.body };
 
-        const updatedProduct = await product.save();
+        const { rows } = await pool.query(
+            `UPDATE "${TABLE}" SET data = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+            [JSON.stringify(mergedData), req.params.id]
+        );
 
         res.status(200).json({
             success: true,
             message: "Product updated successfully",
-            data: updatedProduct,
+            data: flattenRow(rows[0]),
         });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Delete a product
- * @route   DELETE /api/products/:id
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// DELETE /api/products/:id
+// ────────────────────────────────────────────────────────────
 const deleteProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const { rows } = await pool.query(
+            `DELETE FROM "${TABLE}" WHERE id = $1 RETURNING id`,
+            [req.params.id]
+        );
 
-        if (!product) {
+        if (rows.length === 0) {
             res.status(404);
             throw new Error("Product not found");
         }
-
-        await product.deleteOne();
 
         res.status(200).json({
             success: true,
@@ -190,11 +231,9 @@ const deleteProduct = async (req, res, next) => {
     }
 };
 
-/**
- * @desc    Bulk delete products
- * @route   DELETE /api/products/bulk/delete
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// DELETE /api/products/bulk/delete
+// ────────────────────────────────────────────────────────────
 const bulkDeleteProducts = async (req, res, next) => {
     try {
         const { ids } = req.body;
@@ -204,68 +243,68 @@ const bulkDeleteProducts = async (req, res, next) => {
             throw new Error("Please provide an array of product IDs to delete");
         }
 
-        const result = await Product.deleteMany({ _id: { $in: ids } });
+        // Build parameterised IN clause
+        const placeholders = ids.map((_, i) => `$${i + 1}`).join(", ");
+        const result = await pool.query(
+            `DELETE FROM "${TABLE}" WHERE id IN (${placeholders})`,
+            ids
+        );
 
         res.status(200).json({
             success: true,
-            message: `${result.deletedCount} product(s) deleted successfully`,
-            data: { deletedCount: result.deletedCount },
+            message: `${result.rowCount} product(s) deleted successfully`,
+            data: { deletedCount: result.rowCount },
         });
     } catch (error) {
         next(error);
     }
 };
 
-/**
- * @desc    Get product statistics
- * @route   GET /api/products/stats/overview
- * @access  Public
- */
+// ────────────────────────────────────────────────────────────
+// GET /api/products/stats/overview
+// ────────────────────────────────────────────────────────────
 const getProductStats = async (req, res, next) => {
     try {
-        const [stats] = await Product.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalProducts: { $sum: 1 },
-                    totalStock: { $sum: "$stock" },
-                    averagePrice: { $avg: "$price" },
-                    minPrice: { $min: "$price" },
-                    maxPrice: { $max: "$price" },
-                    totalValue: { $sum: { $multiply: ["$price", "$stock"] } },
-                },
-            },
-        ]);
+        // Overview aggregation
+        const { rows: overviewRows } = await pool.query(`
+            SELECT
+                COUNT(*)::int                                            AS "totalProducts",
+                COALESCE(SUM((data->>'stock')::numeric), 0)              AS "totalStock",
+                COALESCE(AVG((data->>'price')::numeric), 0)              AS "averagePrice",
+                COALESCE(MIN((data->>'price')::numeric), 0)              AS "minPrice",
+                COALESCE(MAX((data->>'price')::numeric), 0)              AS "maxPrice",
+                COALESCE(SUM((data->>'price')::numeric * (data->>'stock')::numeric), 0) AS "totalValue"
+            FROM "${TABLE}"
+        `);
 
-        const categoryBreakdown = await Product.aggregate([
-            {
-                $group: {
-                    _id: "$category",
-                    count: { $sum: 1 },
-                    totalStock: { $sum: "$stock" },
-                    avgPrice: { $avg: "$price" },
-                },
-            },
-            { $sort: { count: -1 } },
-        ]);
+        // Category breakdown
+        const { rows: categoryBreakdown } = await pool.query(`
+            SELECT
+                data->>'category'                                AS "_id",
+                COUNT(*)::int                                    AS count,
+                COALESCE(SUM((data->>'stock')::numeric), 0)      AS "totalStock",
+                COALESCE(AVG((data->>'price')::numeric), 0)      AS "avgPrice"
+            FROM "${TABLE}"
+            GROUP BY data->>'category'
+            ORDER BY count DESC
+        `);
 
-        const lowStockProducts = await Product.find({
-            $expr: { $lte: ["$stock", "$lowStockThreshold"] },
-            isActive: true,
-        })
-            .select("name sku stock lowStockThreshold category")
-            .lean();
+        // Low stock
+        const { rows: lowStockProducts } = await pool.query(`
+            SELECT id, data->>'name' AS name, data->>'sku' AS sku,
+                   data->>'stock' AS stock, data->>'lowStockThreshold' AS "lowStockThreshold",
+                   data->>'category' AS category
+            FROM "${TABLE}"
+            WHERE (data->>'stock')::numeric <= (data->>'lowStockThreshold')::numeric
+              AND (data->>'isActive')::boolean = true
+        `);
 
         res.status(200).json({
             success: true,
             data: {
-                overview: stats || {
-                    totalProducts: 0,
-                    totalStock: 0,
-                    averagePrice: 0,
-                    minPrice: 0,
-                    maxPrice: 0,
-                    totalValue: 0,
+                overview: overviewRows[0] || {
+                    totalProducts: 0, totalStock: 0, averagePrice: 0,
+                    minPrice: 0, maxPrice: 0, totalValue: 0,
                 },
                 categoryBreakdown,
                 lowStockProducts,

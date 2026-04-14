@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
-const connectDB = require("./config/db");
+const { connectDB, pool } = require("./config/db");
 const { createEntityRoutes } = require("./routes/entityRoutes");
 const productRoutes = require("./routes/productRoutes");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
@@ -27,8 +27,10 @@ if (process.env.NODE_ENV === "development") {
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
-        message: "🚀 Sri Amman Steels & Hardwares API is running",
+        message: "🚀 VELSON Industries API is running",
+        location: "Salem, Tamil Nadu",
         version: "1.0.0",
+        database: "PostgreSQL (Docker)",
         entities: [
             "companies", "employees", "contractors", "suppliers", "machines",
             "processes", "groupMaster", "accounts", "itemGroups", "items",
@@ -43,23 +45,22 @@ app.get("/", (req, res) => {
 // Generic CRUD for all 15 entities (matches frontend AppContext.jsx)
 app.use("/api", createEntityRoutes());
 
-// Advanced product routes (filtering, stats, bulk) 
+// Advanced product routes (filtering, stats, bulk)
 app.use("/api/products", productRoutes);
 
 // ── Dropdown Options Persistence ──────────────────────────────
-const DropdownOption = require("./models/DropdownOption");
 
 // GET all dropdown option overrides
 app.get("/api/dropdownOptions", async (req, res, next) => {
     try {
-        const all = await DropdownOption.find().lean();
+        const { rows } = await pool.query(`SELECT * FROM dropdown_options`);
         // Return as a map: { dropdownKey: { added, removed, edits } }
         const map = {};
-        all.forEach((doc) => {
-            map[doc.dropdownKey] = {
-                added: doc.added || [],
-                removed: doc.removed || [],
-                edits: doc.edits || {},
+        rows.forEach((row) => {
+            map[row.dropdown_key] = {
+                added: row.added || [],
+                removed: row.removed || [],
+                edits: row.edits || {},
             };
         });
         res.status(200).json(map);
@@ -72,12 +73,31 @@ app.get("/api/dropdownOptions", async (req, res, next) => {
 app.put("/api/dropdownOptions/:key", async (req, res, next) => {
     try {
         const { added, removed, edits } = req.body;
-        const doc = await DropdownOption.findOneAndUpdate(
-            { dropdownKey: req.params.key },
-            { added: added || [], removed: removed || [], edits: edits || {} },
-            { upsert: true, new: true, runValidators: true }
+        const { rows } = await pool.query(
+            `INSERT INTO dropdown_options (dropdown_key, added, removed, edits)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (dropdown_key)
+             DO UPDATE SET added = $2, removed = $3, edits = $4, updated_at = NOW()
+             RETURNING *`,
+            [
+                req.params.key,
+                JSON.stringify(added || []),
+                JSON.stringify(removed || []),
+                JSON.stringify(edits || {}),
+            ]
         );
-        res.status(200).json(doc);
+        // Transform response to match old Mongoose shape
+        const row = rows[0];
+        res.status(200).json({
+            _id: String(row.id),
+            id: String(row.id),
+            dropdownKey: row.dropdown_key,
+            added: row.added,
+            removed: row.removed,
+            edits: row.edits,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
+        });
     } catch (error) {
         next(error);
     }
@@ -90,10 +110,10 @@ app.use(errorHandler);
 // ── Start Server ──────────────────────────────────────────────
 const startServer = async () => {
     try {
-        // Connect to MongoDB Atlas
+        // Connect to PostgreSQL & create tables
         await connectDB();
 
-        // Seed demo data if collections are empty
+        // Seed demo data if tables are empty
         await seedDatabase();
 
         // Start Express server

@@ -1,5 +1,6 @@
 /**
  * Error handling middleware for Express
+ * Updated for PostgreSQL error codes
  */
 
 // Not Found handler
@@ -14,24 +15,29 @@ const errorHandler = (err, req, res, next) => {
     let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     let message = err.message;
 
-    // Mongoose bad ObjectId
-    if (err.name === "CastError" && err.kind === "ObjectId") {
+    // PostgreSQL: invalid input syntax (e.g. non-integer id)
+    if (err.code === "22P02") {
         statusCode = 400;
         message = "Invalid resource ID format";
     }
 
-    // Mongoose duplicate key
-    if (err.code === 11000) {
+    // PostgreSQL: unique_violation (duplicate key)
+    if (err.code === "23505") {
         statusCode = 400;
-        const field = Object.keys(err.keyValue).join(", ");
-        message = `Duplicate value for field: ${field}`;
+        const detail = err.detail || "";
+        message = `Duplicate value: ${detail}`;
     }
 
-    // Mongoose validation error
-    if (err.name === "ValidationError") {
+    // PostgreSQL: not_null_violation
+    if (err.code === "23502") {
         statusCode = 400;
-        const errors = Object.values(err.errors).map((e) => e.message);
-        message = errors.join(". ");
+        message = `Missing required field: ${err.column || "unknown"}`;
+    }
+
+    // PostgreSQL: foreign_key_violation
+    if (err.code === "23503") {
+        statusCode = 400;
+        message = "Referenced record does not exist";
     }
 
     res.status(statusCode).json({
