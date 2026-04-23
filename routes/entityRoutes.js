@@ -12,21 +12,34 @@ const { pool } = require("../config/db");
  */
 const entityMap = {
     // ── Core masters ─────────────────────────────────────────
-    companies:                      { table: "companies",                        name: "Company",                       uniqueField: "companyCode",     sortField: "companyCode" },
-    employees:                      { table: "employees",                         name: "Employee",                      uniqueField: "employeeCode",    sortField: "employeeCode" },
-    contractors:                    { table: "contractors",                        name: "Contractor",                    uniqueField: "contractorCode",  sortField: "contractorCode" },
-    suppliers:                      { table: "suppliers",                          name: "Supplier",                      uniqueField: "supplierCode",    sortField: "supplierCode" },
-    machines:                       { table: "machines",                           name: "Machine",                       uniqueField: "machineCode",     sortField: "machineCode" },
-    processes:                      { table: "processes",                          name: "Process",                       uniqueField: null,              sortField: "processOrder" },
+    companies:                      { table: "companies",                        name: "Company",                       uniqueField: "CompanyCode",     sortField: "CompanyCode" },
+    employees:                      { table: "employees",                         name: "Employee",                      uniqueField: "EM_Code",         sortField: "EM_Code" },
+    contractors:                    { table: "contractors",                        name: "Contractor",                    uniqueField: "Contract_Code",   sortField: "Contract_Code" },
+    suppliers:                      { table: "suppliers",                          name: "Supplier",                      uniqueField: "LM_Code",         sortField: "LM_Code" },
+    machines:                       { table: "machines",                           name: "Machine",                       uniqueField: "Machine_Code",    sortField: "Machine_Code" },
+    processes:                      { table: "processes",                          name: "Process",                       uniqueField: null,              sortField: "PM_Process_Order" },
     groupMaster:                    { table: "group_master",                       name: "GroupMaster",                   uniqueField: "group",           sortField: "group" },
     accounts:                       { table: "accounts",                           name: "Account",                       uniqueField: "acCode",          sortField: "acCode" },
-    itemGroups:                     { table: "item_groups",                        name: "ItemGroup",                     uniqueField: "group",           sortField: "group" },
-    items:                          { table: "items",                              name: "Item",                          uniqueField: "partNo",          sortField: "partNo" },
+    itemGroups:                     { table: "item_groups",                        name: "ItemGroup",                     uniqueField: "IM_PartName",     sortField: "IM_PartName" },
+    items:                          { table: "items",                              name: "Item",                          uniqueField: "IM_Part_No",      sortField: "IM_Part_No" },
     characteristics:                { table: "characteristics",                    name: "Characteristic",                uniqueField: "characteristics", sortField: "characteristics" },
     serviceJobs:                    { table: "service_jobs",                       name: "ServiceJob",                    uniqueField: null,              sortField: "jobName" },
-    referenceGroups:                { table: "reference_groups",                   name: "ReferenceGroup",                uniqueField: "groupName",       sortField: "groupName" },
+    referenceGroups:                { table: "reference_groups",                   name: "ReferenceGroup",                uniqueField: "RG_vCode",        sortField: "RG_vCode" },
     references:                     { table: "references",                         name: "Reference",                     uniqueField: null,              sortField: "referenceType" },
     taxes:                          { table: "taxes",                              name: "Tax",                           uniqueField: "taxLedgerAc",     sortField: "taxLedgerAc" },
+
+    // ── Frontend-specific masters (from AppContext / mockData) ─
+    customers:                      { table: "customers",                          name: "Customer",                      uniqueField: "LM_Code",         sortField: "LM_Code" },
+    vehicles:                       { table: "vehicles",                           name: "Vehicle",                       uniqueField: null,              sortField: null },
+    referenceGroupValues:           { table: "reference_group_values",             name: "ReferenceGroupValue",           uniqueField: null,              sortField: "RGV_vCode" },
+    ledgerMasters:                  { table: "ledger_masters",                     name: "LedgerMaster",                  uniqueField: "LM_Code",         sortField: "LM_Code" },
+    taxMasters:                     { table: "tax_masters",                        name: "TaxMaster",                     uniqueField: null,              sortField: "TM_Tax_Percent" },
+    users:                          { table: "users",                              name: "User",                          uniqueField: "UserName",        sortField: "UserName" },
+    roles:                          { table: "roles",                              name: "Role",                          uniqueField: "RoleName",        sortField: "RoleName" },
+    menus:                          { table: "menus",                              name: "Menu",                          uniqueField: "MenuName",        sortField: "MenuOrder" },
+    qcCheckMethods:                 { table: "qc_check_methods",                   name: "QCCheckMethod",                 uniqueField: "CM_vCode",        sortField: "CM_vCode" },
+    qcInspectionChars:              { table: "qc_inspection_chars",                name: "QCInspectionChar",              uniqueField: "Code",            sortField: "Code" },
+    systemInfo:                     { table: "system_info",                        name: "SystemInfo",                    uniqueField: null,              sortField: null },
 
     // ── Sales ────────────────────────────────────────────────
     quotations:                     { table: "quotations",                         name: "Quotation",                     uniqueField: null, sortField: null },
@@ -174,7 +187,7 @@ const entityMap = {
 /** Flatten PG row → flat object with id string (same shape as old Mongoose docs) */
 const flattenRow = (row) => ({
     ...row.data,
-    id: String(row.id),
+    id: Number(row.id),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
 });

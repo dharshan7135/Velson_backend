@@ -18,7 +18,7 @@ const { pool } = require("../config/db");
 /** Flatten a row from {id, data, created_at, updated_at} into a single object */
 const flattenRow = (row) => ({
     ...row.data,
-    id: String(row.id),
+    id: Number(row.id),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
 });

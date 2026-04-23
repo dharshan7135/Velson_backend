@@ -25,8 +25,10 @@ const ENTITY_TABLES = [
     "employees",
     "contractors",
     "suppliers",
+    "customers",
     "machines",
     "processes",
+    "vehicles",
     "group_master",
     "accounts",
     "item_groups",
@@ -34,9 +36,20 @@ const ENTITY_TABLES = [
     "characteristics",
     "service_jobs",
     "reference_groups",
+    "reference_group_values",
     "references",
     "taxes",
     "products",
+
+    // ── Config / Admin ───────────────────────────────────────
+    "ledger_masters",
+    "tax_masters",
+    "users",
+    "roles",
+    "menus",
+    "qc_check_methods",
+    "qc_inspection_chars",
+    "system_info",
 
     // ── Sales ────────────────────────────────────────────────
     "quotations",

@@ -10,137 +10,46 @@ const { pool } = require("../config/db");
 // ── CORE MASTERS ─────────────────────────────────────────────────
 
 const demoCompanies = [
-    {
-        companyCode: "VELSON", fullName: "VELSON Industries",
-        address: "No. 12, Industrial Estate, Hasthampatty",
-        address1: "No. 12, Industrial Estate", address2: "Hasthampatty",
-        address3: "Salem", address4: "Tamil Nadu - 636007",
-        state: "Tamil Nadu", code: "TN01",
-        phoneOff: "9876500001", phoneRes: "9876500002",
-        subHead: "Head Office", subjectTo: "Salem",
-        bankName: "HDFC Bank", accountName: "VELSON Industries",
-        accountNo: "50200098765432", ifscCode: "HDFC0002567", branch: "Salem Main",
-        emailId: "info@velsonindustries.com",
-        gstin: "33AABCV9999A1Z9", panNo: "AABCV9999A",
-        salesPhoneNo: "9876500003", salesEmailId: "sales@velsonindustries.com",
-        salesWebsite: "www.velsonindustries.com",
-        purchasePhoneNo: "9876500004", purchaseEmailId: "purchase@velsonindustries.com",
-        quotationPhoneNo: "9876500005", quotationEmailId: "quote@velsonindustries.com",
-        quotationWebsite: "www.velsonindustries.com", companyImage: "",
-    },
-    {
-        companyCode: "VELSON-BR", fullName: "VELSON Industries - Branch",
-        address: "Plot 8, SIPCOT Industrial Area",
-        address1: "Plot 8, SIPCOT Industrial Area", address2: "Salem", address3: "", address4: "",
-        state: "Tamil Nadu", code: "TN02",
-        phoneOff: "9876500006",
-        bankName: "SBI", accountName: "VELSON Branch",
-        emailId: "branch@velsonindustries.com",
-        gstin: "33AABCV9999A2Z8", panNo: "AABCV9999A", companyImage: "",
-    },
+    { CompanyCode: "C0001", CompanyName: "VELSON Industries", CompanyTypeId: 121, Status: "Active", DoorNumber: "No. 12", Street: "Industrial Estate", Place: "Hasthampatty", Post: "Hasthampatty", City: "Salem", Taluk: "Salem", District: "Salem", DistrictCode: "33", State: "Tamil Nadu", StateCode: "33", Country: "India", PinCode: "636007", FullAddress: "No. 12, Industrial Estate, Hasthampatty, Salem - 636007", GSTIN: "33AABCV9999A1Z9", PanNo: "AABCV9999A", CPhoneNumber: "9876500001", CEMailId: "info@velsonindustries.com", CWebsiteURL: "www.velsonindustries.com", MPhoneNumber: "9876500002", MEMailId: "marketing@velsonindustries.com", MWebsiteURL: "www.velsonindustries.com", PPhoneNumber: "9876500004", PEMailId: "purchase@velsonindustries.com", PWebsiteURL: "", SPhoneNumber: "9876500003", SEMailId: "sales@velsonindustries.com", SWebsiteURL: "www.velsonindustries.com", SERPhoneNumber: "9876500005", SEREMailId: "service@velsonindustries.com", SERWebsiteURL: "", BankAccountType: "Current", BankAccountName: "VELSON Industries", BankAccountNumber: "50200098765432", BankName: "HDFC Bank", BankIFSCCode: "HDFC0002567", BankMICRCode: "636240002", BankBranch: "Salem Main", BankDistrict: "Salem", BankState: "Tamil Nadu", BankPinCode: "636007", BankCountry: "India", BankFullAddress: "HDFC Bank, Salem Main Branch, Opp Town Hall, Salem - 636007" },
+    { CompanyCode: "C0002", CompanyName: "VELSON Industries - Branch", CompanyTypeId: 122, Status: "Active", DoorNumber: "Plot 8", Street: "SIPCOT Industrial Area", Place: "Salem", Post: "Salem", City: "Salem", Taluk: "Salem", District: "Salem", DistrictCode: "33", State: "Tamil Nadu", StateCode: "33", Country: "India", PinCode: "636008", FullAddress: "Plot 8, SIPCOT Industrial Area, Salem", GSTIN: "33AABCV9999A2Z8", PanNo: "AABCV9999A", CPhoneNumber: "9876500006", CEMailId: "branch@velsonindustries.com", CWebsiteURL: "", MPhoneNumber: "", MEMailId: "", MWebsiteURL: "", PPhoneNumber: "9876500007", PEMailId: "branch.purchase@velsonindustries.com", PWebsiteURL: "", SPhoneNumber: "9876500008", SEMailId: "branch.sales@velsonindustries.com", SWebsiteURL: "", SERPhoneNumber: "", SEREMailId: "", SERWebsiteURL: "", BankAccountType: "Current", BankAccountName: "VELSON Branch", BankAccountNumber: "50200098765433", BankName: "SBI", BankIFSCCode: "SBIN0001234", BankMICRCode: "636002003", BankBranch: "Salem", BankDistrict: "Salem", BankState: "Tamil Nadu", BankPinCode: "636008", BankCountry: "India", BankFullAddress: "SBI, SIPCOT Branch, Salem - 636008" },
 ];
 
 
 const demoEmployees = [
-    { employeeCode: "EMP001", employeeName: "Rajesh Kumar",  department: "Warehouse",   designation: "Store Manager",    contactNo: "9876543210", emailId: "rajesh@velsonindustries.com",  address: "12, Gandhi Street, Salem", joinDate: "2020-03-15", companyName: "VELSON" },
-    { employeeCode: "EMP002", employeeName: "Priya Mani",    department: "Finance",     designation: "Accounts Officer", contactNo: "9876543211", emailId: "priya@velsonindustries.com",   address: "45, Nehru Road, Salem",    joinDate: "2021-06-01", companyName: "VELSON" },
-    { employeeCode: "EMP003", employeeName: "Suresh Babu",   department: "Sales",       designation: "Sales Executive",  contactNo: "9876543212", emailId: "suresh@velsonindustries.com",  address: "78, Lake View, Salem",     joinDate: "2022-01-10", companyName: "VELSON" },
-    { employeeCode: "EMP004", employeeName: "Anitha Devi",   department: "Procurement", designation: "Purchase Officer", contactNo: "9876543213", emailId: "anitha@velsonindustries.com",  address: "90, Anna Nagar, Salem",    joinDate: "2021-09-15", companyName: "VELSON" },
-    { employeeCode: "EMP005", employeeName: "Karthik Raj",   department: "Production",  designation: "Production Head",  contactNo: "9876543214", emailId: "karthik@velsonindustries.com", address: "15, Shevapet, Salem",      joinDate: "2019-05-01", companyName: "VELSON" },
+    { EM_Code: "EMP001", EM_Employee_Name: "Rajesh Kumar", DepartmentId: 101, DepartmentName: "Production", DesignationId: 111, DesignationName: "Manager", ContractId: "", ContractorName: "", CompanyId: 1, CompanyName: "VELSON Industries", Contact_No: "9876543210", Adhar_No: "234567890123", Join_Date: "2020-03-15", EM_DOB: "1985-08-12", Releving_Date: "", EM_Team: "Team A", EM_Email_ID: "rajesh@velsonindustries.com", EM_Rep_Person: "Karthik Raj", EM_Status: "Active", Address: "12, Gandhi Street, Salem" },
+    { EM_Code: "EMP002", EM_Employee_Name: "Priya Mani", DepartmentId: 103, DepartmentName: "Sales", DesignationId: 112, DesignationName: "Engineer", ContractId: "", ContractorName: "", CompanyId: 1, CompanyName: "VELSON Industries", Contact_No: "9876543211", Adhar_No: "345678901234", Join_Date: "2021-06-01", EM_DOB: "1993-03-22", Releving_Date: "", EM_Team: "", EM_Email_ID: "priya@velsonindustries.com", EM_Rep_Person: "Rajesh Kumar", EM_Status: "Active", Address: "45, Nehru Road, Salem" },
+    { EM_Code: "EMP003", EM_Employee_Name: "Suresh Babu", DepartmentId: 102, DepartmentName: "Quality", DesignationId: 113, DesignationName: "Supervisor", ContractId: "", ContractorName: "", CompanyId: 1, CompanyName: "VELSON Industries", Contact_No: "9876543212", Adhar_No: "456789012345", Join_Date: "2022-01-10", EM_DOB: "1990-11-05", Releving_Date: "", EM_Team: "Team B", EM_Email_ID: "suresh@velsonindustries.com", EM_Rep_Person: "Rajesh Kumar", EM_Status: "Active", Address: "78, Lake View, Salem" },
+    { EM_Code: "EMP004", EM_Employee_Name: "Anitha Devi", DepartmentId: 104, DepartmentName: "Purchase", DesignationId: 114, DesignationName: "Operator", ContractId: 1, ContractorName: "Kumar Fabrications", CompanyId: 1, CompanyName: "VELSON Industries", Contact_No: "9876543213", Adhar_No: "567890123456", Join_Date: "2021-09-15", EM_DOB: "1988-07-18", Releving_Date: "2025-03-31", EM_Team: "", EM_Email_ID: "anitha@velsonindustries.com", EM_Rep_Person: "Rajesh Kumar", EM_Status: "Relieved", Address: "90, Anna Nagar, Salem" },
+    { EM_Code: "EMP005", EM_Employee_Name: "Karthik Raj", DepartmentId: 101, DepartmentName: "Production", DesignationId: 111, DesignationName: "Manager", ContractId: "", ContractorName: "", CompanyId: 1, CompanyName: "VELSON Industries", Contact_No: "9876543214", Adhar_No: "678901234567", Join_Date: "2019-05-01", EM_DOB: "1982-12-30", Releving_Date: "", EM_Team: "Team A", EM_Email_ID: "karthik@velsonindustries.com", EM_Rep_Person: "", EM_Status: "Active", Address: "15, Shevapet, Salem" },
 ];
 
 const demoContractors = [
-    { contractorCode: "CON001", contractorName: "Kumar Fabrications",      address: "Suramangalam, Salem",  city: "Salem", contactNo: "9944221100", gstNo: "33AABCK8899A1Z1" },
-    { contractorCode: "CON002", contractorName: "Ravi Transport Services", address: "Hasthampatti, Salem",  city: "Salem", contactNo: "9944221101", gstNo: "33AABCR7788B1Z2" },
-    { contractorCode: "CON003", contractorName: "Siva Welding Works",      address: "Fairlands, Salem",     city: "Salem", contactNo: "9944221102" },
+    { Contract_Code: "CON001", Contract_Name: "Kumar Fabrications", Address: "Suramangalam, Salem", Phone: "9944221100", Email: "info@kumarfab.com", Status: "Active" },
+    { Contract_Code: "CON002", Contract_Name: "Ravi Transport Services", Address: "Hasthampatti, Salem", Phone: "9944221101", Email: "ravi@transport.com", Status: "Active" },
+    { Contract_Code: "CON003", Contract_Name: "Siva Welding Works", Address: "Fairlands, Salem", Phone: "9944221102", Email: "siva@welding.com", Status: "Inactive" },
 ];
 
-// SupplierDetails emptyForm: supplierCode, supplierName, address, city, state, stateCode,
-// country, pincode, phone1, phone2, grade, emailId, website, gstNo, partDetails, bankName, partNo1
 const demoSuppliers = [
-    {
-        supplierCode: "SUP001", supplierName: "Tata Steel Dealers",
-        address: "Steel Market, Salem", city: "Salem", state: "Tamil Nadu",
-        stateCode: "33", country: "India", pincode: "636001",
-        phone1: "9111222001", phone2: "", grade: "A",
-        emailId: "tata.dealers@gmail.com", website: "www.tatasteel.com",
-        gstNo: "33AABCT2222B1Z2", bankName: "SBI",
-        partDetails: "TMT, Structural Steel", partNo1: "ITM001",
-    },
-    {
-        supplierCode: "SUP002", supplierName: "JSW Steel Distributors",
-        address: "Omalur Road, Salem", city: "Salem", state: "Tamil Nadu",
-        stateCode: "33", country: "India", pincode: "636009",
-        phone1: "9111222002", phone2: "", grade: "A",
-        emailId: "jsw.dist@gmail.com", website: "",
-        gstNo: "33AABCJ3333C1Z3", bankName: "", partDetails: "", partNo1: "",
-    },
-    {
-        supplierCode: "SUP003", supplierName: "Stanley Tools India",
-        address: "Industrial Area, Chennai", city: "Chennai", state: "Tamil Nadu",
-        stateCode: "33", country: "India", pincode: "600058",
-        phone1: "9111222003", phone2: "", grade: "B",
-        emailId: "stanley.ind@gmail.com", website: "",
-        gstNo: "", bankName: "", partDetails: "Tools, Abrasives", partNo1: "ITM004",
-    },
-    {
-        supplierCode: "SUP004", supplierName: "Bosch Hardware Pvt Ltd",
-        address: "Mount Road, Chennai", city: "Chennai", state: "Tamil Nadu",
-        stateCode: "33", country: "India", pincode: "600002",
-        phone1: "9111222004", phone2: "", grade: "A",
-        emailId: "bosch.hw@bosch.com", website: "www.bosch.in",
-        gstNo: "33AAACB4444D1Z4", bankName: "ICICI", partDetails: "Hardware, Fasteners", partNo1: "ITM005",
-    },
+    { SupplierTypeId: 141, LM_Ledger_Name: "Tata Steel Dealers", LM_Code: "S-001", LM_Address1: "Steel Market, Salem", LM_Area: "Salem", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_Contact_Person: "Mr. Singh", LM_Phone_Number: "9111222001", LM_GSTIN: "33AABCT2222B1Z2" },
+    { SupplierTypeId: 142, LM_Ledger_Name: "JSW Steel Distributors", LM_Code: "S-002", LM_Address1: "Omalur Road, Salem", LM_Area: "Salem", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_Contact_Person: "Purchase Mgr", LM_Phone_Number: "9111222002", LM_GSTIN: "33AABCJ3333C1Z3" },
+    { SupplierTypeId: 141, LM_Ledger_Name: "Stanley Tools India", LM_Code: "S-003", LM_Address1: "Industrial Area, Chennai", LM_Area: "Chennai", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_Contact_Person: "Sales Team", LM_Phone_Number: "9111222003", LM_GSTIN: "" },
+    { SupplierTypeId: 142, LM_Ledger_Name: "Bosch Hardware Pvt Ltd", LM_Code: "S-004", LM_Address1: "Mount Road, Chennai", LM_Area: "Chennai", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_Contact_Person: "Vendor Support", LM_Phone_Number: "9111222004", LM_GSTIN: "33AAACB4444D1Z4" },
 ];
 
 
-// MachineMaster emptyForm: machineCode, machineName, serialNo, machineCategory,
-// workHoursPerDay, model, manufacture, country, currency, price,
-// vendorName, installationPlace, remark, yearOfFG,
-// dateOfPurchase, dateOfInstallation, warrantyExpDate, amcExpDate
 const demoMachines = [
-    {
-        machineCode: "MCH001", machineName: "CNC Cutting Machine", serialNo: "HYP-2023-001",
-        machineCategory: "Cutting", workHoursPerDay: "8",
-        model: "Powermax 105", manufacture: "Hypertherm", country: "USA", currency: "USD",
-        price: "850000", vendorName: "SUP001",
-        installationPlace: "Workshop Bay 1", remark: "High precision plasma cutter",
-        yearOfFG: "2023-01-01", dateOfPurchase: "2023-01-15",
-        dateOfInstallation: "2023-02-01", warrantyExpDate: "2026-01-31", amcExpDate: "2027-01-31",
-    },
-    {
-        machineCode: "MCH002", machineName: "Hydraulic Press Brake", serialNo: "AMD-2022-045",
-        machineCategory: "Bending", workHoursPerDay: "8",
-        model: "HFE 1003", manufacture: "Amada", country: "Japan", currency: "JPY",
-        price: "1200000", vendorName: "SUP002",
-        installationPlace: "Workshop Bay 2", remark: "",
-        yearOfFG: "2022-06-01", dateOfPurchase: "2022-06-20",
-        dateOfInstallation: "2022-07-10", warrantyExpDate: "2025-06-19", amcExpDate: "2026-06-19",
-    },
-    {
-        machineCode: "MCH003", machineName: "MIG Welding Machine", serialNo: "ESB-2024-012",
-        machineCategory: "Welding", workHoursPerDay: "8",
-        model: "Warrior 500i", manufacture: "ESAB", country: "India", currency: "INR",
-        price: "125000", vendorName: "SUP003",
-        installationPlace: "Welding Station A", remark: "",
-        dateOfPurchase: "2024-01-10",
-    },
-    {
-        machineCode: "MCH004", machineName: "Lathe Machine", serialNo: "HMT-2021-088",
-        machineCategory: "Turning", workHoursPerDay: "8",
-        model: "NH26 CNC", manufacture: "HMT", country: "India", currency: "INR",
-        price: "450000",
-        installationPlace: "Turning Section", remark: "",
-        dateOfPurchase: "2021-08-15",
-    },
+    { MachineCategoryId: 151, MachineCategoryName: "CNC", VendorId: 161, VendorName: "Haas Automation", Machine_Code: "M001", Machine_Name: "CNC Cutting Machine", Machine_Description: "High precision plasma cutter", Location: "Workshop Bay 1", Status: "Active" },
+    { MachineCategoryId: 152, MachineCategoryName: "Lathe", VendorId: 162, VendorName: "DMG Mori", Machine_Code: "M002", Machine_Name: "Hydraulic Press Brake", Machine_Description: "HFE 1003 press brake", Location: "Workshop Bay 2", Status: "Active" },
+    { MachineCategoryId: 153, MachineCategoryName: "Milling", VendorId: 161, VendorName: "Haas Automation", Machine_Code: "M003", Machine_Name: "MIG Welding Machine", Machine_Description: "Warrior 500i", Location: "Welding Station A", Status: "Active" },
+    { MachineCategoryId: 152, MachineCategoryName: "Lathe", VendorId: 162, VendorName: "DMG Mori", Machine_Code: "M004", Machine_Name: "Lathe Machine", Machine_Description: "NH26 CNC lathe", Location: "Turning Section", Status: "Active" },
 ];
 
 
 const demoProcesses = [
-    { partName: "Steel Plate",  processName: "Cutting", processName1: "CNC Cutting", team: "Team A", machineCode: "MCH001", machineName: "CNC Cutting Machine",   processOrder: "1", cycleTime: "10", settingTime: "5",  handlingTime: "2" },
-    { partName: "Steel Plate",  processName: "Bending", processName1: "Press Bend",  team: "Team B", machineCode: "MCH002", machineName: "Hydraulic Press Brake", processOrder: "2", cycleTime: "15", settingTime: "8",  handlingTime: "3" },
-    { partName: "Steel Plate",  processName: "Welding", processName1: "MIG Weld",    team: "Team A", machineCode: "MCH003", machineName: "MIG Welding Machine",   processOrder: "3", cycleTime: "20", settingTime: "10", handlingTime: "5" },
-    { partName: "MS Round Bar", processName: "Turning", processName1: "CNC Turn",    team: "Team B", machineCode: "MCH004", machineName: "Lathe Machine",         processOrder: "1", cycleTime: "12", settingTime: "6",  handlingTime: "3" },
+    { PM_Process_Name: "Cutting", PM_Process_Name1: "CUT", ProcessTypeId: 171, ProcessTypeName: "In-House", TeamId: 181, TeamName: "Team A", PM_Process_Order: 1, PM_Days: 0, PM_Hours: 2, Minutes: 30, Setting_Time: 5, Cycle_Time: 10, Handling_Time: 2, Idle_Time: 1, Machine_id: 1, Machine_Name: "CNC Cutting Machine" },
+    { PM_Process_Name: "Bending", PM_Process_Name1: "BEND", ProcessTypeId: 171, ProcessTypeName: "In-House", TeamId: 182, TeamName: "Team B", PM_Process_Order: 2, PM_Days: 0, PM_Hours: 3, Minutes: 0, Setting_Time: 8, Cycle_Time: 15, Handling_Time: 3, Idle_Time: 2, Machine_id: 2, Machine_Name: "Hydraulic Press Brake" },
+    { PM_Process_Name: "Welding", PM_Process_Name1: "WELD", ProcessTypeId: 171, ProcessTypeName: "In-House", TeamId: 181, TeamName: "Team A", PM_Process_Order: 3, PM_Days: 0, PM_Hours: 4, Minutes: 0, Setting_Time: 10, Cycle_Time: 20, Handling_Time: 5, Idle_Time: 3, Machine_id: 3, Machine_Name: "MIG Welding Machine" },
+    { PM_Process_Name: "Turning", PM_Process_Name1: "TURN", ProcessTypeId: 172, ProcessTypeName: "Outsource", TeamId: 182, TeamName: "Team B", PM_Process_Order: 1, PM_Days: 0, PM_Hours: 2, Minutes: 0, Setting_Time: 6, Cycle_Time: 12, Handling_Time: 3, Idle_Time: 1, Machine_id: 4, Machine_Name: "Lathe Machine" },
 ];
 
 const demoGroupMasters = [
@@ -212,90 +121,19 @@ const demoAccounts = [
 
 
 const demoItemGroups = [
-    { group: "TMT Bars",   storeName: "Main Store",  underGroupOf: "" },
-    { group: "MS Pipes",   storeName: "Main Store",  underGroupOf: "" },
-    { group: "GI Sheets",  storeName: "Main Store",  underGroupOf: "" },
-    { group: "Hand Tools", storeName: "Tools Store", underGroupOf: "" },
-    { group: "Fasteners",  storeName: "Tools Store", underGroupOf: "" },
+    { IM_PartName: "Raw Materials", StoreId: 1, StoreName: "Main Store", PrefixId: 1, PrefixName: "RM", status: "A" },
+    { IM_PartName: "Finished Goods", StoreId: 1, StoreName: "Main Store", PrefixId: 2, PrefixName: "FG", status: "A" },
+    { IM_PartName: "Bought Out Parts", StoreId: 2, StoreName: "Sub Store", PrefixId: 3, PrefixName: "BO", status: "A" },
+    { IM_PartName: "Hand Tools", StoreId: 2, StoreName: "Tools Store", PrefixId: 4, PrefixName: "HT", status: "A" },
+    { IM_PartName: "Fasteners", StoreId: 2, StoreName: "Tools Store", PrefixId: 5, PrefixName: "FN", status: "A" },
 ];
 
-// ItemMaster emptyForm: itemGroup, subGroup, partNo, outSourcePartNo, partName,
-// model, brand, description, size, weight, uom, hsnCode, purchaseRate,
-// marginPercent, rate, currency, gstPer, category, reorderLevel, minStock,
-// storeName, rackNo, location, remarks, note, itemType, source,
-// barcodeType, barcode, printName, qcType,
-// materialGrade, materialType, rawMaterial, length, rmWeight, fgWeight, imageUpload
 const demoItems = [
-    {
-        itemGroup: "TMT Bars", subGroup: "TMT Bars", partNo: "ITM001",
-        outSourcePartNo: "", partName: "TMT Bar 8mm Fe500D",
-        model: "", brand: "", description: "8mm dia TMT bar Fe500D grade",
-        size: "8mm", weight: "0.395", uom: "KG",
-        hsnCode: "72142000", purchaseRate: "55", marginPercent: "12.7",
-        rate: "62", currency: "INR", gstPer: "18",
-        category: "Steel", reorderLevel: "500", minStock: "200",
-        storeName: "Main Store", rackNo: "R-01", location: "Bay-1",
-        remarks: "", note: "", itemType: "Raw Material", source: "Purchase",
-        barcodeType: "QR", barcode: "BC-ITM001", printName: "TMT 8mm Fe500D",
-        qcType: "QUALITY", materialGrade: "Fe500D", materialType: "TMT",
-        rawMaterial: "Yes", length: "12000", rmWeight: "0.395", fgWeight: "", imageUpload: "",
-    },
-    {
-        itemGroup: "TMT Bars", subGroup: "TMT Bars", partNo: "ITM002",
-        outSourcePartNo: "", partName: "TMT Bar 12mm Fe500D",
-        model: "", brand: "", description: "12mm dia TMT bar Fe500D grade",
-        size: "12mm", weight: "0.888", uom: "KG",
-        hsnCode: "72142000", purchaseRate: "54", marginPercent: "12.9",
-        rate: "61", currency: "INR", gstPer: "18",
-        category: "Steel", reorderLevel: "400", minStock: "150",
-        storeName: "Main Store", rackNo: "R-02", location: "Bay-1",
-        remarks: "", note: "", itemType: "Raw Material", source: "Purchase",
-        barcodeType: "QR", barcode: "BC-ITM002", printName: "TMT 12mm Fe500D",
-        qcType: "QUALITY", materialGrade: "Fe500D", materialType: "TMT",
-        rawMaterial: "Yes", length: "12000", rmWeight: "0.888", fgWeight: "", imageUpload: "",
-    },
-    {
-        itemGroup: "MS Pipes", subGroup: "MS Pipes", partNo: "ITM003",
-        outSourcePartNo: "", partName: "MS Hollow Pipe 2inch",
-        model: "", brand: "", description: "2 inch MS hollow pipe",
-        size: "2inch", weight: "3.7", uom: "MTR",
-        hsnCode: "73063000", purchaseRate: "85", marginPercent: "11.7",
-        rate: "95", currency: "INR", gstPer: "18",
-        category: "Steel", reorderLevel: "200", minStock: "80",
-        storeName: "Main Store", rackNo: "R-03", location: "Bay-2",
-        remarks: "", note: "", itemType: "Raw Material", source: "Purchase",
-        barcodeType: "QR", barcode: "BC-ITM003", printName: "MS Pipe 2in",
-        qcType: "VISUAL", materialGrade: "MS", materialType: "Pipe",
-        rawMaterial: "Yes", length: "6000", rmWeight: "3.7", fgWeight: "", imageUpload: "",
-    },
-    {
-        itemGroup: "Hand Tools", subGroup: "Hand Tools", partNo: "ITM004",
-        outSourcePartNo: "", partName: "Grinding Wheel 7inch",
-        model: "", brand: "Norton", description: "7 inch grinding wheel",
-        size: "7inch", weight: "0.3", uom: "NOS",
-        hsnCode: "68042100", purchaseRate: "45", marginPercent: "22.2",
-        rate: "55", currency: "INR", gstPer: "12",
-        category: "Tools", reorderLevel: "50", minStock: "20",
-        storeName: "Tools Store", rackNo: "T-01", location: "Tool Room",
-        remarks: "", note: "", itemType: "Consumable", source: "Purchase",
-        barcodeType: "EAN", barcode: "BC-ITM004", printName: "Grinding Wheel 7in",
-        qcType: "VISUAL", materialGrade: "", materialType: "Abrasive",
-        rawMaterial: "No", length: "", rmWeight: "", fgWeight: "", imageUpload: "",
-    },
-    {
-        itemGroup: "Fasteners", subGroup: "Fasteners", partNo: "ITM005",
-        outSourcePartNo: "", partName: "Hex Bolt M12x50",
-        model: "", brand: "", description: "M12x50 hex bolt grade 8.8",
-        size: "M12x50", weight: "0.055", uom: "NOS",
-        hsnCode: "73181500", purchaseRate: "5", marginPercent: "40",
-        rate: "7", currency: "INR", gstPer: "18",
-        category: "Fastener", reorderLevel: "500", minStock: "200",
-        storeName: "Tools Store", rackNo: "T-02", location: "Tool Room",
-        remarks: "", note: "", itemType: "Consumable", source: "Purchase",
-        barcodeType: "EAN", barcode: "BC-ITM005", printName: "Hex Bolt M12x50",
-        qcType: "VISUAL", materialGrade: "8.8", materialType: "Fastener",
-        rawMaterial: "No", length: "50", rmWeight: "", fgWeight: "", imageUpload: "",
-    },
+    { GroupId: 1, GroupName: "Raw Materials", IM_Part_No: "RM00001", Outsource_Part_No: "", IM_PartName: "SS304 Round Bar 25mm", ModelId: "", Brand: "Jindal", IM_Description: "Stainless Steel 304 Round Bar", IM_Size: "25mm", IM_WEIGHT: 12.5, UnitId: 192, UnitName: "Kg", SubGroupId: "", ItemTypeId: 201, ItemTypeName: "Raw Material", QcTypeId: "", IM_HSN_Code: "72041000", IM_Purchase_Rate: 250, IM_Margin_per: 20, IM_Rate: 300, CurrencyId: "", TaxId: "", StoreId: 1, MaterialGradeId: "", MaterialTypeId: "", RawMaterialId: "", Rack_No: "R1-A", Location: "Main Store", IM_ReorderLevel: 50, IM_Min_Stock: 20, RM_length: "6m", Raw_material_wt: 12.5, FG_material_wt: "", RouteCardNumber: "", Status: "Active" },
+    { GroupId: 2, GroupName: "Finished Goods", IM_Part_No: "FG00001", Outsource_Part_No: "OSP-001", IM_PartName: "Shaft Assembly SA-100", ModelId: "", Brand: "VELSON", IM_Description: "Precision turned shaft assembly", IM_Size: "100mm", IM_WEIGHT: 3.2, UnitId: 191, UnitName: "Nos", SubGroupId: "", ItemTypeId: 202, ItemTypeName: "Finished Good", QcTypeId: "", IM_HSN_Code: "84831020", IM_Purchase_Rate: 1500, IM_Margin_per: 46.67, IM_Rate: 2200, CurrencyId: "", TaxId: "", StoreId: 1, MaterialGradeId: "", MaterialTypeId: "", RawMaterialId: "", Rack_No: "R2-B", Location: "FG Store", IM_ReorderLevel: 10, IM_Min_Stock: 5, RM_length: "", Raw_material_wt: "", FG_material_wt: 3.2, RouteCardNumber: "RC-SA100", Status: "Active" },
+    { GroupId: 1, GroupName: "Raw Materials", IM_Part_No: "RM00002", Outsource_Part_No: "", IM_PartName: "EN8 Round Bar 50mm", ModelId: "", Brand: "Tata", IM_Description: "Carbon Steel EN8 Round Bar", IM_Size: "50mm", IM_WEIGHT: 25, UnitId: 192, UnitName: "Kg", SubGroupId: "", ItemTypeId: 201, ItemTypeName: "Raw Material", QcTypeId: "", IM_HSN_Code: "72142000", IM_Purchase_Rate: 180, IM_Margin_per: 22.22, IM_Rate: 220, CurrencyId: "", TaxId: "", StoreId: 1, MaterialGradeId: "", MaterialTypeId: "", RawMaterialId: "", Rack_No: "R1-B", Location: "Main Store", IM_ReorderLevel: 100, IM_Min_Stock: 50, RM_length: "6m", Raw_material_wt: 25, FG_material_wt: "", RouteCardNumber: "", Status: "Active" },
+    { GroupId: 3, GroupName: "Bought Out Parts", IM_Part_No: "BO00001", Outsource_Part_No: "", IM_PartName: "Grinding Wheel 7inch", ModelId: "", Brand: "Norton", IM_Description: "Norton 7 inch grinding wheel", IM_Size: "7 inch", IM_WEIGHT: 0.3, UnitId: 191, UnitName: "Nos", SubGroupId: "", ItemTypeId: 201, ItemTypeName: "Raw Material", QcTypeId: "", IM_HSN_Code: "68042100", IM_Purchase_Rate: 45, IM_Margin_per: 22.22, IM_Rate: 55, CurrencyId: "", TaxId: "", StoreId: 2, MaterialGradeId: "", MaterialTypeId: "", RawMaterialId: "", Rack_No: "R3-A", Location: "Tools Store", IM_ReorderLevel: 20, IM_Min_Stock: 10, RM_length: "", Raw_material_wt: "", FG_material_wt: "", RouteCardNumber: "", Status: "Active" },
+    { GroupId: 5, GroupName: "Fasteners", IM_Part_No: "FN00001", Outsource_Part_No: "", IM_PartName: "Hex Bolt M12x50", ModelId: "", Brand: "Unbrako", IM_Description: "M12x50 hex bolt grade 8.8", IM_Size: "M12x50", IM_WEIGHT: 0.055, UnitId: 191, UnitName: "Nos", SubGroupId: "", ItemTypeId: 201, ItemTypeName: "Raw Material", QcTypeId: "", IM_HSN_Code: "73181500", IM_Purchase_Rate: 5, IM_Margin_per: 40, IM_Rate: 7, CurrencyId: "", TaxId: "", StoreId: 2, MaterialGradeId: "", MaterialTypeId: "", RawMaterialId: "", Rack_No: "R4-C", Location: "Tools Store", IM_ReorderLevel: 200, IM_Min_Stock: 100, RM_length: "", Raw_material_wt: "", FG_material_wt: "", RouteCardNumber: "", Status: "Active" },
 ];
 
 
@@ -313,9 +151,16 @@ const demoServiceJobs = [
 ];
 
 const demoReferenceGroups = [
-    { groupName: "Department" }, { groupName: "Designation" }, { groupName: "UOM" },
-    { groupName: "Machine Category" }, { groupName: "Team" }, { groupName: "Currency" },
-    { groupName: "Vehicle Type" }, { groupName: "Store Name" }, { groupName: "Payment Mode" }, { groupName: "Job Status" },
+    { RG_vCode: "Department", RG_vDescription: "Department", status: "A" },
+    { RG_vCode: "Designation", RG_vDescription: "Designation", status: "A" },
+    { RG_vCode: "Company Type", RG_vDescription: "Company Type", status: "A" },
+    { RG_vCode: "Customer Type", RG_vDescription: "Customer Type", status: "A" },
+    { RG_vCode: "Supplier Type", RG_vDescription: "Supplier Type", status: "A" },
+    { RG_vCode: "Machine Category", RG_vDescription: "Machine Category", status: "A" },
+    { RG_vCode: "Vendor", RG_vDescription: "Vendor", status: "A" },
+    { RG_vCode: "Process Type", RG_vDescription: "Process Type", status: "A" },
+    { RG_vCode: "Team", RG_vDescription: "Team", status: "A" },
+    { RG_vCode: "UOM", RG_vDescription: "Unit of Measurement", status: "A" },
 ];
 
 const demoReferences = [
@@ -355,13 +200,142 @@ const demoTaxes = [
     { taxLedgerAc: "GST 28%", taxPercent: "28", cgstPercent: "14",  sgstPercent: "14",  igstPercent: "28", purchaseCGST: "Input CGST 14%",  purchaseSGST: "Input SGST 14%",  purchaseIGST: "Input IGST 28%", salesCGST: "Output CGST 14%",  salesSGST: "Output SGST 14%",  salesIGST: "Output IGST 28%", hsnCode: "" },
 ];
 
+
+// ── FRONTEND-ALIGNED ENTITIES (field keys match mockData.js exactly) ─────
+
+// CustomerMaster — keys: CustomerTypeId, LM_Ledger_Name, LM_Code, LM_Address1, LM_Area, etc.
+const demoCustomers = [
+    { CustomerTypeId: 131, LM_Ledger_Name: "Tata Motors Ltd", LM_Code: "C-001", LM_Address1: "14 Haddows Road", LM_Address2: "Nungambakkam", LM_Address3: "", LM_Address4: "", LM_Address5: "", LM_Area: "Chennai", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_PinCode: "600006", LM_Contact_Person: "Mr. Arvind", LM_Phone_Number: "044-28240000", LM_Cell_No: "9876540001", LM_EmailID: "arvind@tatamotors.com", LM_WebSite: "www.tatamotors.com", LM_GSTIN: "33AAACT1234Z1Z1", LM_PAN_No: "AAACT1234Z", LM_Aadhar_No: "", LM_Bank_Name: "SBI", LM_Branch: "Chennai Main", LM_Account_Name: "Tata Motors Ltd", LM_Account_Number: "10987654321", LM_IFSC_Code: "SBIN0001234", LM_MICRCODEBANK: "", LM_Cus_Remarks: "" },
+    { CustomerTypeId: 132, LM_Ledger_Name: "Ashok Leyland", LM_Code: "C-002", LM_Address1: "1 Sardar Patel Rd", LM_Address2: "Guindy", LM_Address3: "", LM_Address4: "", LM_Address5: "", LM_Area: "Chennai", LM_State: "Tamil Nadu", LM_StateCode: "33", LM_Country: "India", LM_PinCode: "600032", LM_Contact_Person: "Ms. Deepa", LM_Phone_Number: "044-28200000", LM_Cell_No: "9876540002", LM_EmailID: "deepa@ashokleyland.com", LM_WebSite: "www.ashokleyland.com", LM_GSTIN: "33AACCA5678B1Z2", LM_PAN_No: "AACCA5678B", LM_Aadhar_No: "", LM_Bank_Name: "HDFC", LM_Branch: "Anna Salai", LM_Account_Name: "Ashok Leyland", LM_Account_Number: "20987654321", LM_IFSC_Code: "HDFC0005678", LM_MICRCODEBANK: "", LM_Cus_Remarks: "" },
+    { CustomerTypeId: 131, LM_Ledger_Name: "Mahindra & Mahindra", LM_Code: "C-003", LM_Address1: "Gateway Building", LM_Address2: "Apollo Bunder", LM_Address3: "", LM_Address4: "", LM_Address5: "", LM_Area: "Mumbai", LM_State: "Maharashtra", LM_StateCode: "27", LM_Country: "India", LM_PinCode: "400001", LM_Contact_Person: "Mr. Ravi", LM_Phone_Number: "022-24901441", LM_Cell_No: "9876540003", LM_EmailID: "ravi@mahindra.com", LM_WebSite: "www.mahindra.com", LM_GSTIN: "27AABCM1234E1Z5", LM_PAN_No: "AABCM1234E", LM_Aadhar_No: "", LM_Bank_Name: "ICICI", LM_Branch: "Fort Mumbai", LM_Account_Name: "Mahindra & Mahindra", LM_Account_Number: "30987654321", LM_IFSC_Code: "ICIC0009012", LM_MICRCODEBANK: "", LM_Cus_Remarks: "" },
+];
+
+// VehicleMaster — keys: Customer_Id, CustomerName, Vehicle_Model_No_Id, etc.
+const demoVehicles = [
+    { Customer_Id: 1, CustomerName: "Tata Motors Ltd", Contact_Person: "Mr. Arvind", LM_Address1: "14 Haddows Road", LM_GSTIN: "33AAACT1234Z1Z1", Vehicle_Model_No_Id: "VM001", Model_Sub_Type_Id: "Standard", Vehicle_Name_Id: "Nexon", Serial_No: "1", Vehicle_No: "TN-01-AB-1234", Customer_Vehicle_Count: 1, BOM_Type: "Standard", Model_Row_Id: "", Remarks: "", Status: "Active" },
+    { Customer_Id: 2, CustomerName: "Ashok Leyland", Contact_Person: "Ms. Deepa", LM_Address1: "1 Sardar Patel Rd", LM_GSTIN: "33AACCA5678B1Z2", Vehicle_Model_No_Id: "VM002", Model_Sub_Type_Id: "Heavy", Vehicle_Name_Id: "Dost", Serial_No: "1", Vehicle_No: "TN-09-CD-5678", Customer_Vehicle_Count: 1, BOM_Type: "Custom", Model_Row_Id: "", Remarks: "", Status: "Active" },
+];
+
+// ReferenceGroupValue — keys: RG_iID, groupName, RGV_vCode, RGV_vDescription, status
+const demoReferenceGroupValues = [
+    // Department
+    { RG_iID: 1, groupName: "Department", RGV_vCode: "D001", RGV_vDescription: "Production", status: "A" },
+    { RG_iID: 1, groupName: "Department", RGV_vCode: "D002", RGV_vDescription: "Quality", status: "A" },
+    { RG_iID: 1, groupName: "Department", RGV_vCode: "D003", RGV_vDescription: "Sales", status: "A" },
+    { RG_iID: 1, groupName: "Department", RGV_vCode: "D004", RGV_vDescription: "Purchase", status: "A" },
+    { RG_iID: 1, groupName: "Department", RGV_vCode: "D005", RGV_vDescription: "HR", status: "A" },
+    // Designation
+    { RG_iID: 2, groupName: "Designation", RGV_vCode: "DG001", RGV_vDescription: "Manager", status: "A" },
+    { RG_iID: 2, groupName: "Designation", RGV_vCode: "DG002", RGV_vDescription: "Engineer", status: "A" },
+    { RG_iID: 2, groupName: "Designation", RGV_vCode: "DG003", RGV_vDescription: "Supervisor", status: "A" },
+    { RG_iID: 2, groupName: "Designation", RGV_vCode: "DG004", RGV_vDescription: "Operator", status: "A" },
+    // Company Type
+    { RG_iID: 3, groupName: "Company Type", RGV_vCode: "CT001", RGV_vDescription: "Manufacturing", status: "A" },
+    { RG_iID: 3, groupName: "Company Type", RGV_vCode: "CT002", RGV_vDescription: "Trading", status: "A" },
+    // Customer Type
+    { RG_iID: 4, groupName: "Customer Type", RGV_vCode: "CU001", RGV_vDescription: "Domestic", status: "A" },
+    { RG_iID: 4, groupName: "Customer Type", RGV_vCode: "CU002", RGV_vDescription: "Export", status: "A" },
+    // Supplier Type
+    { RG_iID: 5, groupName: "Supplier Type", RGV_vCode: "SU001", RGV_vDescription: "Raw Material", status: "A" },
+    { RG_iID: 5, groupName: "Supplier Type", RGV_vCode: "SU002", RGV_vDescription: "Service", status: "A" },
+    // Machine Category
+    { RG_iID: 6, groupName: "Machine Category", RGV_vCode: "MC001", RGV_vDescription: "CNC", status: "A" },
+    { RG_iID: 6, groupName: "Machine Category", RGV_vCode: "MC002", RGV_vDescription: "Lathe", status: "A" },
+    { RG_iID: 6, groupName: "Machine Category", RGV_vCode: "MC003", RGV_vDescription: "Milling", status: "A" },
+    // Vendor
+    { RG_iID: 7, groupName: "Vendor", RGV_vCode: "V001", RGV_vDescription: "Haas Automation", status: "A" },
+    { RG_iID: 7, groupName: "Vendor", RGV_vCode: "V002", RGV_vDescription: "DMG Mori", status: "A" },
+    // Process Type
+    { RG_iID: 8, groupName: "Process Type", RGV_vCode: "PT001", RGV_vDescription: "In-House", status: "A" },
+    { RG_iID: 8, groupName: "Process Type", RGV_vCode: "PT002", RGV_vDescription: "Outsource", status: "A" },
+    // Team
+    { RG_iID: 9, groupName: "Team", RGV_vCode: "T001", RGV_vDescription: "Team A", status: "A" },
+    { RG_iID: 9, groupName: "Team", RGV_vCode: "T002", RGV_vDescription: "Team B", status: "A" },
+    // UOM
+    { RG_iID: 10, groupName: "UOM", RGV_vCode: "U001", RGV_vDescription: "Nos", status: "A" },
+    { RG_iID: 10, groupName: "UOM", RGV_vCode: "U002", RGV_vDescription: "Kg", status: "A" },
+    { RG_iID: 10, groupName: "UOM", RGV_vCode: "U003", RGV_vDescription: "Mtr", status: "A" },
+    // Item Type
+    { RG_iID: 12, groupName: "Item Type", RGV_vCode: "IT001", RGV_vDescription: "Raw Material", status: "A" },
+    { RG_iID: 12, groupName: "Item Type", RGV_vCode: "IT002", RGV_vDescription: "Finished Good", status: "A" },
+    // Currency
+    { RG_iID: 16, groupName: "Currency", RGV_vCode: "C001", RGV_vDescription: "INR", status: "A" },
+    { RG_iID: 16, groupName: "Currency", RGV_vCode: "C002", RGV_vDescription: "USD", status: "A" },
+    // Material Grade
+    { RG_iID: 17, groupName: "Material Grade", RGV_vCode: "MG001", RGV_vDescription: "SS304", status: "A" },
+    { RG_iID: 17, groupName: "Material Grade", RGV_vCode: "MG002", RGV_vDescription: "EN8", status: "A" },
+    // Tax Type
+    { RG_iID: 25, groupName: "Tax Type", RGV_vCode: "TT001", RGV_vDescription: "Local", status: "A" },
+    { RG_iID: 25, groupName: "Tax Type", RGV_vCode: "TT002", RGV_vDescription: "Interstate", status: "A" },
+    // Quotation Type
+    { RG_iID: 23, groupName: "Quotation Type", RGV_vCode: "QT001", RGV_vDescription: "Standard", status: "A" },
+    { RG_iID: 23, groupName: "Quotation Type", RGV_vCode: "QT002", RGV_vDescription: "Custom", status: "A" },
+];
+
+// LedgerMaster — keys: LM_Ledger_Name, LM_Code, LedgerID
+const demoLedgerMasters = [
+    { LM_Ledger_Name: "GST Output Tax", LM_Code: "LM001", LedgerID: 1 },
+    { LM_Ledger_Name: "GST Input Tax", LM_Code: "LM002", LedgerID: 2 },
+    { LM_Ledger_Name: "IGST Payable", LM_Code: "LM003", LedgerID: 3 },
+];
+
+// TaxMaster — keys: LedgerID, LedgerName, TM_Tax_Percent, TM_CGST_Tax, etc.
+const demoTaxMasters = [
+    { LedgerID: 1, LedgerName: "GST Output Tax", TM_Tax_Percent: 18, TM_CGST_Tax: 9, TM_SGST_Tax: 9, TM_IGST_Tax: 18, TM_PCGST: 9, TM_PSGST: 9, TM_PIGST: 18, TM_SCGST: 9, TM_SSGST: 9, TM_SIGST: 18 },
+    { LedgerID: 2, LedgerName: "GST Input Tax", TM_Tax_Percent: 12, TM_CGST_Tax: 6, TM_SGST_Tax: 6, TM_IGST_Tax: 12, TM_PCGST: 6, TM_PSGST: 6, TM_PIGST: 12, TM_SCGST: 6, TM_SSGST: 6, TM_SIGST: 12 },
+    { LedgerID: 1, LedgerName: "GST Output Tax", TM_Tax_Percent: 5, TM_CGST_Tax: 2.5, TM_SGST_Tax: 2.5, TM_IGST_Tax: 5, TM_PCGST: 2.5, TM_PSGST: 2.5, TM_PIGST: 5, TM_SCGST: 2.5, TM_SSGST: 2.5, TM_SIGST: 5 },
+];
+
+// Users — keys: UserName, FirstName, LastName, EmailId, Gender, MobileNo, Status, RoleId, RoleName
+const demoUsers = [
+    { UserName: "admin", FirstName: "Admin", LastName: "User", EmailId: "admin@velson.com", Gender: "Male", MobileNo: "9876543210", Status: "Active", RoleId: 1, RoleName: "SuperAdmin" },
+    { UserName: "manager1", FirstName: "Rajesh", LastName: "Kumar", EmailId: "rajesh@velson.com", Gender: "Male", MobileNo: "9876543211", Status: "Active", RoleId: 3, RoleName: "Admin" },
+    { UserName: "user1", FirstName: "Priya", LastName: "Sharma", EmailId: "priya@velson.com", Gender: "Female", MobileNo: "9876543212", Status: "Active", RoleId: 2, RoleName: "User" },
+];
+
+// Roles — keys: RoleName, Status
+const demoRoles = [
+    { RoleName: "SuperAdmin", Status: "Active" },
+    { RoleName: "User", Status: "Active" },
+    { RoleName: "Admin", Status: "Active" },
+];
+
+// Menus — keys: MenuName, MenuOrder, Status
+const demoMenus = [
+    { MenuName: "Dashboard", MenuOrder: 1, Status: "Active" },
+    { MenuName: "Masters", MenuOrder: 2, Status: "Active" },
+    { MenuName: "Inventory", MenuOrder: 3, Status: "Active" },
+    { MenuName: "Sales", MenuOrder: 4, Status: "Active" },
+    { MenuName: "Accounting", MenuOrder: 5, Status: "Active" },
+    { MenuName: "Quality Control", MenuOrder: 6, Status: "Active" },
+    { MenuName: "Configuration", MenuOrder: 7, Status: "Active" },
+];
+
+// QCCheckMethod — keys: CM_vCode, CM_vName, CM_vDescription, CM_cStatus
+const demoQCCheckMethods = [
+    { CM_vCode: "QCM001", CM_vName: "Visual Inspection", CM_vDescription: "Visual check for surface defects", CM_cStatus: "A" },
+    { CM_vCode: "QCM002", CM_vName: "Dimensional Check", CM_vDescription: "Measurement using gauges", CM_cStatus: "A" },
+    { CM_vCode: "QCM003", CM_vName: "Hardness Test", CM_vDescription: "Rockwell/Brinell hardness testing", CM_cStatus: "A" },
+];
+
+// QCInspectionChar — keys: Code, Name, Description, Status
+const demoQCInspectionChars = [
+    { Code: "IC001", Name: "Surface Finish", Description: "Surface roughness measurement", Status: "A" },
+    { Code: "IC002", Name: "Roundness", Description: "Circularity tolerance check", Status: "A" },
+    { Code: "IC003", Name: "Hardness", Description: "Material hardness value", Status: "A" },
+];
+
+// SystemInfo — keys: IPAddress, MACAddress, DeviceName, USERNAME, DEPT
+const demoSystemInfo = [
+    { IPAddress: "192.168.1.100", MACAddress: "AA:BB:CC:DD:EE:01", DeviceName: "WORK-PC-01", USERNAME: "admin", DEPT: "IT" },
+    { IPAddress: "192.168.1.101", MACAddress: "AA:BB:CC:DD:EE:02", DeviceName: "PROD-PC-01", USERNAME: "rajesh", DEPT: "Production" },
+];
+
 // ── SALES ────────────────────────────────────────────────────────
-// QuotationEntry columns: PO_No, Supplier_Name, PO_Date, Net_Amt, PO_Status
-// (same emptyForm shape as PurchaseOrder)
 const demoQuotations = [
-    { PO_No: "QT-2025-001", Supplier_ID: "SUP001", Supplier_Name: "Tata Steel Dealers", Supplier_Address: "Steel Market, Salem", PO_Date: "2025-01-10", Delivery_Date: "2025-01-25", PO_Status: "Approved", Approval_Status: "Approved", Invoice_Status: "Pending", Quotation_Status: "Active", PO_Type: "Local", Net_Amt: 147500, Total_Before_Disc: 125000, Desc_Per: 0, Desc_Amt: 0, Taxable_Amount: 125000, CGST_Per: 9, CGST_Amt: 11250, SGST_Per: 9, SGST_Amt: 11250, IGST_Per: 0, IGST_Amt: 0, Tax_Per: 18, Gst_Amt: 22500, Freight_Amount: 0, Currency_Name: "INR", Exchange_Rate: 1, Payment_Terms: "30 days", Delivery_Terms: "EX-Works", Remarks: "Urgent", Created_by: "EMP003", Created_Date: "2025-01-10" },
-    { PO_No: "QT-2025-002", Supplier_ID: "SUP002", Supplier_Name: "JSW Steel Distributors", Supplier_Address: "Omalur Road, Salem", PO_Date: "2025-01-15", Delivery_Date: "2025-02-01", PO_Status: "Pending", Approval_Status: "Pending", Invoice_Status: "Pending", Quotation_Status: "Active", PO_Type: "Local", Net_Amt: 100300, Total_Before_Disc: 85000, Desc_Per: 0, Desc_Amt: 0, Taxable_Amount: 85000, CGST_Per: 9, CGST_Amt: 7650, SGST_Per: 9, SGST_Amt: 7650, IGST_Per: 0, IGST_Amt: 0, Tax_Per: 18, Gst_Amt: 15300, Freight_Amount: 0, Currency_Name: "INR", Exchange_Rate: 1, Payment_Terms: "15 days", Delivery_Terms: "EX-Works", Remarks: "", Created_by: "EMP003", Created_Date: "2025-01-15" },
-    { PO_No: "QT-2025-003", Supplier_ID: "SUP003", Supplier_Name: "Stanley Tools India", Supplier_Address: "Industrial Area, Chennai", PO_Date: "2025-02-01", Delivery_Date: "2025-02-15", PO_Status: "Closed", Approval_Status: "Approved", Invoice_Status: "Received", Quotation_Status: "Active", PO_Type: "Local", Net_Amt: 53100, Total_Before_Disc: 45000, Desc_Per: 0, Desc_Amt: 0, Taxable_Amount: 45000, CGST_Per: 9, CGST_Amt: 4050, SGST_Per: 9, SGST_Amt: 4050, IGST_Per: 0, IGST_Amt: 0, Tax_Per: 18, Gst_Amt: 8100, Freight_Amount: 300, Currency_Name: "INR", Exchange_Rate: 1, Payment_Terms: "Cash", Delivery_Terms: "F.O.R", Remarks: "", Created_by: "EMP003", Created_Date: "2025-02-01" },
+    { PO_No: "25-26/Q00001", PODate: "2025-04-15", CustomerName: "Tata Motors Ltd", Customer_ID: 1, TaxType: "Local", Net_Amt: 125000.00, Status: "Open" },
+    { PO_No: "25-26/Q00002", PODate: "2025-04-18", CustomerName: "Ashok Leyland", Customer_ID: 2, TaxType: "Interstate", Net_Amt: 85000.00, Status: "Confirmed" },
+    { PO_No: "25-26/Q00003", PODate: "2025-05-01", CustomerName: "Mahindra & Mahindra", Customer_ID: 3, TaxType: "Local", Net_Amt: 53100.00, Status: "Open" },
 ];
 
 // QuotationDetails columns: PO_NO, Item_Code, Item_Name, Qty, Net_Amt
@@ -1099,6 +1073,18 @@ const seedMap = [
     { table: "reference_groups",                   data: demoReferenceGroups,              name: "ReferenceGroups" },
     { table: "references",                         data: demoReferences,                   name: "References" },
     { table: "taxes",                              data: demoTaxes,                        name: "Taxes" },
+    // Frontend-specific masters
+    { table: "customers",                          data: demoCustomers,                    name: "Customers" },
+    { table: "vehicles",                           data: demoVehicles,                     name: "Vehicles" },
+    { table: "reference_group_values",             data: demoReferenceGroupValues,         name: "ReferenceGroupValues" },
+    { table: "ledger_masters",                     data: demoLedgerMasters,                name: "LedgerMasters" },
+    { table: "tax_masters",                        data: demoTaxMasters,                   name: "TaxMasters" },
+    { table: "users",                              data: demoUsers,                        name: "Users" },
+    { table: "roles",                              data: demoRoles,                        name: "Roles" },
+    { table: "menus",                              data: demoMenus,                        name: "Menus" },
+    { table: "qc_check_methods",                   data: demoQCCheckMethods,               name: "QCCheckMethods" },
+    { table: "qc_inspection_chars",                data: demoQCInspectionChars,            name: "QCInspectionChars" },
+    { table: "system_info",                        data: demoSystemInfo,                   name: "SystemInfo" },
     // Sales
     { table: "quotations",                         data: demoQuotations,                   name: "Quotations" },
     { table: "quotation_details",                  data: demoQuotationDetails,             name: "QuotationDetails" },
