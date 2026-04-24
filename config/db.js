@@ -1,13 +1,21 @@
 const { Pool } = require("pg");
 
 // ── PostgreSQL connection pool ───────────────────────────────
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-});
+// Supports Render's DATABASE_URL (production) and individual env vars (local dev)
+const poolConfig = process.env.DATABASE_URL
+    ? {
+          connectionString: process.env.DATABASE_URL,
+          ssl: { rejectUnauthorized: false },
+      }
+    : {
+          user: process.env.DB_USER,
+          host: process.env.DB_HOST,
+          database: process.env.DB_DATABASE,
+          password: process.env.DB_PASSWORD,
+          port: parseInt(process.env.DB_PORT, 10) || 5432,
+      };
+
+const pool = new Pool(poolConfig);
 
 /**
  * Entity tables use a JSONB column (`data`) to store dynamic fields,
