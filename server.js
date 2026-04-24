@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
         message: "🚀 VELSON Industries API is running",
         location: "Salem, Tamil Nadu",
         version: "1.0.0",
-        database: "PostgreSQL (Docker)",
+        database: "PostgreSQL",
         entities: [
             "companies", "employees", "contractors", "suppliers", "customers",
             "machines", "processes", "vehicles", "groupMaster", "accounts",
